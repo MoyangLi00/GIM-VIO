@@ -1,5 +1,7 @@
 # iSLAM: Imperative SLAM
 
+[Paper](https://arxiv.org/pdf/2306.07894) | [Code](https://github.com/sair-lab/iSLAM.git) | [Webpage](https://sairlab.org/iSLAM/)
+
 iSLAM is a novel self-supervised imperative learning framework for SLAM tasks. It fosters reciprocal correction between the front-end and back-end, thus enhancing performance without necessitating any external supervision. 
 
 <img src='docs/iSLAM anim.gif' width=500>
@@ -42,6 +44,13 @@ Video: https://www.youtube.com/watch?v=rtCvx0XCRno
 Webpage: https://sairlab.org/iSLAM/
 
 ## Run Code
+
+Download the code
+
+```
+git clone https://github.com/MoyangLi00/GIM-VIO.git
+cd GIM-VIO
+```
 
 ### Create Conda Environment
 

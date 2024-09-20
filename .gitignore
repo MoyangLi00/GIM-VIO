@@ -17,3 +17,5 @@ wandb/
 *.npy
 *.html
 *.ipynb
+
+data/

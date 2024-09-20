@@ -1,0 +1,38 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Train euroc",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "train.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--result-dir=train_results/test_euroc/exp_bs=8_lr=3e-6_lw=(4,0.1,2,0.1)",
+                "--save-model-dir=train_results_models/test_euroc/exp_bs=8_lr=3e-6_lw=(4,0.1,2,0.1)",
+                "--project-name=test_euroc",
+                "--train-name=exp_bs=8_lr=3e-6_lw=(4,0.1,2,0.1)",
+                "--vo-model-name=./models/stereo_cvt_tartanvo_1914.pkl",
+                "--imu-denoise-model-name=./models/1029_euroc_no_cov_1layer_epoch_100_train_loss_0.19208121810994155.pth",
+                "--batch-size=8",
+                "--worker-num=2",
+                "--data-root=./data/euroc/MH_01_easy/mav0",
+                "--start-frame=0",
+                "--end-frame=-1",
+                "--train-epoch=14",
+                "--start-epoch=1",
+                "--print-interval=1",
+                "--snapshot-interval=100",
+                "--lr=3e-6",
+                "--loss-weight=(4,0.1,2,0.1)",
+                "--data-type=euroc",
+                "--fix-model-parts='flow' 'stereo'",
+                "--rot-w=1",
+                "--trans-w=0.1",
+            ]
+        }
+    ]
+}

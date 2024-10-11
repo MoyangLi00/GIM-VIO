@@ -13,13 +13,13 @@ start_epoch=1
 project_name=test_euroc
 train_name=exp_bs=${batch_size}_lr=${lr}_lw=${loss_weight}
 
-mkdir -p train_results/${project_name}/${train_name}
-mkdir -p train_results_models/${project_name}/${train_name}
+mkdir -p eval_results/${project_name}/${train_name}
+mkdir -p eval_results_models/${project_name}/${train_name}
 
 
-python train.py \
-    --result-dir train_results/${project_name}/${train_name} \
-    --save-model-dir train_results_models/${project_name}/${train_name} \
+python eval.py \
+    --result-dir eval_results/${project_name}/${train_name} \
+    --save-model-dir eval_results_models/${project_name}/${train_name} \
     --project-name ${project_name} \
     --train-name ${train_name} \
     --vo-model-name ./models/stereo_cvt_tartanvo_1914.pkl \

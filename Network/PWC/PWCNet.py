@@ -234,6 +234,7 @@ class PWCDCNet(nn.Module):
 
 
     def forward(self,x):
+        # [8, 6, 448, 640]
         im1 = x[:,0:3,...]
         im2 = x[:,3:6,...]
         

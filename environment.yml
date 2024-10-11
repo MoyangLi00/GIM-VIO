@@ -85,6 +85,8 @@ dependencies:
   - pytorch=2.0.1=py3.8_cuda11.7_cudnn8.5.0_0
   - pytorch-cuda=11.7=h778d358_5
   - pytorch-mutex=1.0=cuda
+  - torchvision=0.15.2
+  - torchaudio=2.0.2
   - readline=8.2=h5eee18b_0
   - setuptools=68.0.0=py38h06a4308_0
   - sqlite=3.41.2=h5eee18b_0
@@ -189,4 +191,6 @@ dependencies:
       - werkzeug==2.2.3
       - yacs==0.1.8
       - zipp==3.13.0
+      - pypose
+      - einops
 prefix: /home/tymon/miniconda3/envs/iSLAM

@@ -183,9 +183,9 @@ class EuRoCTrajFolderLoader:
 
         ############################## load gt poses ######################################################################
         df = pandas.read_csv(datadir + '/state_groundtruth_estimate0/data.csv')
-        timestamps_pose = df.values[:, 0].astype(int) // int(1e6)
+        timestamps_pose = df.values[:, 0].astype(int) // int(1e6)   # ms to s
         all_timestamps.append(timestamps_pose)
-        self.poses = df.values[:, (1,2,3, 5,6,7,4)].astype(np.float32)
+        self.poses = df.values[:, (1,2,3, 5,6,7,4)].astype(np.float32)  # x, y, z, qx, qy, qz, qw (right format of TUM dataset)
         self.vels = df.values[:, 8:11].astype(np.float32)
         accel_bias = df.values[:, 14:17].astype(np.float32)
         gyro_bias = df.values[:, 11:14].astype(np.float32)
@@ -481,7 +481,7 @@ class TrajFolderDataset(TrajFolderDatasetBase):
         img1 = self.undistort(img1)
         res['img0'] = [img0]
         res['img1'] = [img1]
-
+        # load data of cam2
         if self.rgbfiles_right is not None:
             img0_r = cv2.imread(self.rgbfiles_right[i], cv2.IMREAD_COLOR)
             img1_r = cv2.imread(self.rgbfiles_right[j], cv2.IMREAD_COLOR)

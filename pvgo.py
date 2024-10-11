@@ -122,6 +122,8 @@ class PoseVelGraph(nn.Module):
 def run_pvgo(init_nodes, init_vels, vo_motions, links, dts, imu_drots, imu_dtrans, imu_dvels, 
                 device='cuda:0', radius=1e4, loss_weight=(1,1,1,1), reproj=None, target='vo'):
     
+    # init_nodes: imu_poses; init_vels: imu_vels; vo_motions: vo_delta_poses
+    
     vo_rot_infos = np.ones(len(links)) * loss_weight[0]**2
     vo_trans_infos = np.ones(len(links)) * loss_weight[0]**2
     imu_rot_infos = np.ones(len(init_nodes)-1) * loss_weight[2]**2
@@ -149,9 +151,9 @@ def run_pvgo(init_nodes, init_vels, vo_motions, links, dts, imu_drots, imu_dtran
     imu_drots_grad = imu_drots.to(device)
     imu_dvels_grad = imu_dvels.to(device)
 
-    imu_drots = imu_drots.detach().to(device)
-    imu_dtrans = imu_dtrans.detach().to(device)
-    imu_dvels = imu_dvels.detach().to(device)
+    imu_drots = imu_drots.detach().to(device)   # [8, 4]
+    imu_dtrans = imu_dtrans.detach().to(device) # [8, 3]
+    imu_dvels = imu_dvels.detach().to(device)   # [8, 3]
     dts = dts.unsqueeze(-1).to(device)
 
     vo_info_mats = torch.stack(vo_info_mats).to(torch.float32).to(device)
@@ -165,8 +167,8 @@ def run_pvgo(init_nodes, init_vels, vo_motions, links, dts, imu_drots, imu_dtran
         weights.append(reproj_info_mats)
 
     # build graph and optimizer
-    graph = PoseVelGraph(init_nodes.detach(), init_vels.detach(), reproj).to(device)
-    solver = ppos.Cholesky()
+    graph = PoseVelGraph(init_nodes.detach(), init_vels.detach(), reproj).to(device)        # IMU poses and velocities used for the initialization of camera poses.
+    solver = ppos.Cholesky()    # linear solver
     strategy = ppost.TrustRegion(radius=radius)
     optimizer = pp.optim.LM(graph, solver=solver, strategy=strategy, min=1e-4, vectorize=True)
     scheduler = StopOnPlateau(optimizer, steps=10, patience=3, decreasing=1e-3, verbose=False)

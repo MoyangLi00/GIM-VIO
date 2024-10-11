@@ -16,6 +16,7 @@
                 "--project-name=test_euroc",
                 "--train-name=exp_bs=8_lr=3e-6_lw=(4,0.1,2,0.1)",
                 "--vo-model-name=./models/stereo_cvt_tartanvo_1914.pkl",
+                "--flow-model-name=GIM",
                 "--imu-denoise-model-name=./models/1029_euroc_no_cov_1layer_epoch_100_train_loss_0.19208121810994155.pth",
                 "--batch-size=8",
                 "--worker-num=2",

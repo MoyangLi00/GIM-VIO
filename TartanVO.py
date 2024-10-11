@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import os
 
 import cv2
 import numpy as np
@@ -32,7 +33,7 @@ class TartanVO(nn.Module):
             # print('Loading vo network...')
             self.load_model(self.vonet, vo_model_name)
         # can override part of the model
-        if flow_model_name is not None and flow_model_name != "":
+        if flow_model_name is not None and flow_model_name != "" and flow_model_name != 'GIM':
             # print('Loading flow network...')
             self.load_model(self.vonet.flowNet, flow_model_name)
         if pose_model_name is not None and pose_model_name != "":
@@ -41,6 +42,24 @@ class TartanVO(nn.Module):
         if stereo_model_name is not None and stereo_model_name != "":
             # print('Loading stereo network...')
             self.load_model(self.vonet.stereoNet, stereo_model_name)
+
+        self.flowNet_model = flow_model_name
+
+        if self.flowNet_model == 'GIM':
+            self.vonet.update_GIM()
+
+            # load state dict
+            # weights path
+            ckpt = 'gim_dkm_100h.ckpt'
+            checkpoints_path = os.path.join('models', ckpt)
+            state_dict = torch.load(checkpoints_path, map_location='cpu', weights_only=False)
+            if 'state_dict' in state_dict.keys(): state_dict = state_dict['state_dict']
+            for k in list(state_dict.keys()):
+                if k.startswith('model.'):
+                    state_dict[k.replace('model.', '', 1)] = state_dict.pop(k)
+                if 'encoder.net.fc' in k:
+                    state_dict.pop(k)
+            self.vonet.GIM.load_state_dict(state_dict)
         
         self.vonet = self.vonet.cuda(self.device_id)
         # self.vonet = torch.compile(self.vonet).cuda(self.device_id)
@@ -104,7 +123,7 @@ class TartanVO(nn.Module):
             precalc_flow = sample['flow'] if 'flow' in sample else None
 
             ############################## forward vonet ######################################################################   
-            flow, disp, pose = self.vonet(img0, img1, img0_norm, img0_r_norm, intrinsic)
+            flow, disp, pose = self.vonet(img0, img1, img0_norm, img0_r_norm, intrinsic, flowNet_model=self.flowNet_model)
             pose = pose * self.pose_std # The output is normalized during training, now scale it back
             flow = flow.detach()
             disp = disp.detach()

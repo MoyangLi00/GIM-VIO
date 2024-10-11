@@ -68,7 +68,11 @@ if __name__ == '__main__':
 
     torch.set_float32_matmul_precision('high')
 
+    print("==================Perfrom Evaluation=======================\n")
+    is_train = False
+
     args = get_args()
+    args.train_epoch = 1
     print('\n==============================================')
     print(args)
     print('==============================================\n')
@@ -109,7 +113,7 @@ if __name__ == '__main__':
     print('Loading VO model:', args.vo_model_name, pose_model_name)
 
     tartanvo = TartanVO(
-        vo_model_name=args.vo_model_name, pose_model_name=pose_model_name, flow_model_name=args.flow_model_name,
+        vo_model_name=args.vo_model_name, pose_model_name=pose_model_name, 
         correct_scale=args.use_gt_scale, fix_parts=args.fix_model_parts, use_kitti_coord=(dataset.datatype!='tartanair')
     )
     if args.vo_optimizer == 'adam':
@@ -144,7 +148,9 @@ if __name__ == '__main__':
     ############################## logs before running ######################################################################
     with open(trainroot+'/args.txt', 'w') as f:
         f.write(str(args))
-    np.savetxt(trainroot+'/gt_pose.txt', dataset.poses)
+    groundtruth_poses = np.concatenate([dataset.rgb_ts[:, None], dataset.poses], axis=1)
+    # np.savetxt(trainroot+'/gt_pose.txt', dataset.poses)
+    np.savetxt(trainroot+'/gt_pose.txt', groundtruth_poses)
     np.savetxt(trainroot+'/timestamp.txt', dataset.rgb_ts, fmt='%.3f')
 
     ############################## init before loop ######################################################################
@@ -207,9 +213,10 @@ if __name__ == '__main__':
         try:
             assert train_target[epoch] != 'vo'
             motions = prev_vo_motions[current_idx:current_idx+args.batch_size]
-            
+        
+        # TODO:
         except:
-            vo_result = tartanvo(sample)    # samples: 'img0':[8, 3, H, W], 'img1':[8, 3, H, W], 'dt':[8], 'link':[8]
+            vo_result = tartanvo(sample, is_train=is_train)
             motions = vo_result['motion']
             T_IL = dataset.rgb2imu_pose.to(motions.device)
             motions = T_IL @ motions @ T_IL.Inv()
@@ -286,7 +293,7 @@ if __name__ == '__main__':
 
         ############################## log and snapshot ######################################################################
         timer.tic('snapshot')
-        # TODO:
+
         if step_cnt < 10 or step_cnt % args.snapshot_interval == 0:
             snapshot()
 

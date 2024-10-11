@@ -297,6 +297,7 @@ class SparseReprojectionLoss:
 
 
     def __call__(self, motion):
+        # motion is predicted in RGB frame
         T = self.rgb2imu_pose.Inv() @ motion @ self.rgb2imu_pose
 
         err = reprojerr(self.point3d, self.target, self.K, T.Inv(), reduction='none')
